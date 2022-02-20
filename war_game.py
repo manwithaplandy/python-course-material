@@ -103,6 +103,10 @@ while game_on:
         game_on = False
         break
 
+    # Break edge case where deck arrangement results in infinite loop - shuffle player one's deck every 10,000 rounds
+    if round_number % 10000 == 0:
+        random.shuffle(player_one.all_cards)
+
     # Count the number of rounds
     round_number += 1
     totnumcards = len(player_one.all_cards) + len(player_two.all_cards)
@@ -125,16 +129,21 @@ while game_on:
         at_war = True
 
     while at_war:
-        if len(player_one.all_cards) != 0 and len(player_two.all_cards) != 0:
-            for i in range(min(len(player_one.all_cards), 3)):
+        if len(player_one.all_cards) > 0 and len(player_two.all_cards) > 0:
+            for i in range(min(len(player_one.all_cards)-1, 3)):
                 table_cards.append(player_one.remove_one())
-            for i in range(min(len(player_two.all_cards), 3)):
-                table_cards.append(player_one.remove_one())
+            for i in range(min(len(player_two.all_cards)-1, 3)):
+                table_cards.append(player_two.remove_one())
         else:
+            print("winner found during war")
             break
-        # table_cards.extend([player_one.remove_one(), player_one.remove_one(), player_one.remove_one(), player_two.remove_one(), player_two.remove_one(), player_two.remove_one()])
-        player_one_card = player_one.remove_one()
-        player_two_card = player_two.remove_one()
+
+        if len(player_one.all_cards) > 0 and len(player_two.all_cards) > 0:
+            player_one_card = player_one.remove_one()
+            player_two_card = player_two.remove_one()
+        else:
+            print("Winner found during war 2")
+            break
         if player_two_card.value > player_one_card.value:
             player_two.add_cards(table_cards)
             player_two.add_cards([player_two_card, player_one_card])
@@ -144,6 +153,8 @@ while game_on:
             player_one.add_cards([player_one_card, player_two_card])
             at_war = False
         else:
+            print('another war!')
+            print(f'Table cards: {len(table_cards)}')
             continue
 
 
