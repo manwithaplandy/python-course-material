@@ -92,18 +92,22 @@ at_war = False
 
 while game_on:
 
-    # Count the number of rounds
-    round_number += 1
-    print(f'Current round number: {round_number}')
-    print(f'Current cards in play is {len(player_one.all_cards)+len(player_two.all_cards)}')
-
     # Check if a player has lost
     if len(player_one.all_cards) == 0:
-        game_on = False
         print('Player Two wins!')
-    elif len(player_two.all_cards) == 0:
         game_on = False
+        break
+
+    elif len(player_two.all_cards) == 0:
         print('Player One wins!')
+        game_on = False
+        break
+
+    # Count the number of rounds
+    round_number += 1
+    totnumcards = len(player_one.all_cards) + len(player_two.all_cards)
+    print(f'Current round number: {round_number}')
+    print(f'Player 1: {len(player_one.all_cards)} Player 2: {len(player_two.all_cards)}')
 
     # Start a new round
     player_one_card = player_one.remove_one()
@@ -117,10 +121,18 @@ while game_on:
     elif player_one_card.value > player_two_card.value:
         player_one.add_cards(table_cards)
     else:
+        print('War!')
         at_war = True
 
     while at_war:
-        table_cards.extend([player_one.remove_one(), player_one.remove_one(), player_one.remove_one(), player_two.remove_one(), player_two.remove_one(), player_two.remove_one()])
+        if len(player_one.all_cards) != 0 and len(player_two.all_cards) != 0:
+            for i in range(min(len(player_one.all_cards), 3)):
+                table_cards.append(player_one.remove_one())
+            for i in range(min(len(player_two.all_cards), 3)):
+                table_cards.append(player_one.remove_one())
+        else:
+            break
+        # table_cards.extend([player_one.remove_one(), player_one.remove_one(), player_one.remove_one(), player_two.remove_one(), player_two.remove_one(), player_two.remove_one()])
         player_one_card = player_one.remove_one()
         player_two_card = player_two.remove_one()
         if player_two_card.value > player_one_card.value:
