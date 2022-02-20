@@ -90,8 +90,14 @@ game_on = True
 at_war = False
 
 
-def check_win():
-    global game_on
+while game_on:
+
+    # Count the number of rounds
+    round_number += 1
+    print(f'Current round number: {round_number}')
+    print(f'Current cards in play is {len(player_one.all_cards)+len(player_two.all_cards)}')
+
+    # Check if a player has lost
     if len(player_one.all_cards) == 0:
         game_on = False
         print('Player Two wins!')
@@ -99,43 +105,31 @@ def check_win():
         game_on = False
         print('Player One wins!')
 
-
-while game_on:
-
-    global game_on
-    global at_war
-    # Count the number of rounds
-    round_number += 1
-    print(f'Current round number: {round_number}')
-
-    # Check if a player has lost
-    check_win()
-
     # Start a new round
-    player_one_cards = []
-    player_one_cards.append(player_one.remove_one())
+    player_one_card = player_one.remove_one()
 
-    player_two_cards = []
-    player_one_cards.append(player_one.remove_one())
+    player_two_card = player_two.remove_one()
 
-    table_cards = [player_two_cards[0], player_one_cards[0]]
+    table_cards = [player_two_card, player_one_card]
 
-    if player_two_cards[0] > player_one_cards[0]:
+    if player_two_card.value > player_one_card.value:
         player_two.add_cards(table_cards)
-    elif player_one_cards[0] > player_two_cards[0]:
+    elif player_one_card.value > player_two_card.value:
         player_one.add_cards(table_cards)
     else:
         at_war = True
 
     while at_war:
         table_cards.extend([player_one.remove_one(), player_one.remove_one(), player_one.remove_one(), player_two.remove_one(), player_two.remove_one(), player_two.remove_one()])
-        player_one_cards = [player_one.remove_one()]
-        player_two_cards = [player_two.remove_one()]
-        if player_two_cards[0] > player_one_cards[0]:
+        player_one_card = player_one.remove_one()
+        player_two_card = player_two.remove_one()
+        if player_two_card.value > player_one_card.value:
             player_two.add_cards(table_cards)
+            player_two.add_cards([player_two_card, player_one_card])
             at_war = False
-        elif player_one_cards[0] > player_two_cards[0]:
+        elif player_one_card.value > player_two_card.value:
             player_one.add_cards(table_cards)
+            player_one.add_cards([player_one_card, player_two_card])
             at_war = False
         else:
             continue
